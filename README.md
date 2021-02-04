@@ -14,3 +14,9 @@ By default the scripts generates a random string of characters to use as a
 prefix for the file names.
 If you want to specify a prefix you can do this with the second argument:
 `./download_slides.sh link [slide deck name]`
+
+# Note
+By default the script is limited to downloading 1024 slides in one batch to
+limit the possible damage if something goes wrong.
+Should you want to lift this limit just change the respective variable in the
+script.
