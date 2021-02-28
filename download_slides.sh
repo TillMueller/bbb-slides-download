@@ -13,11 +13,12 @@ else
     BASE_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 fi
 
+echo "Base link is \"$BASE_LINK\""
 echo "Downloading slide deck from BBB, output file names will start with \"$BASE_NAME\""
 
 for i in $(seq 1 $MAX_SLIDES); do
 	echo "Downloading slide $i"
-	curl "$BASE_LINK$i" \
+	curl "$BASE_LINK/$i" \
 		--silent \
 		--compressed \
 		--fail \
