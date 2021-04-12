@@ -16,15 +16,31 @@ fi
 echo "Base link is \"$BASE_LINK\""
 echo "Downloading slide deck from BBB, output file names will start with \"$BASE_NAME\""
 
+if [[ -d "$BASE_NAME" ]]; then
+    echo "Output folder \"$BASE_NAME\" already exists, exiting."
+    exit
+fi
+mkdir $BASE_NAME || exit
+cd $BASE_NAME
+
 for i in $(seq 1 $MAX_SLIDES); do
 	echo "Downloading slide $i"
 	curl "$BASE_LINK/$i" \
 		--silent \
 		--compressed \
 		--fail \
-		--output "${BASE_NAME}_$i.svg" 
+		--output "${BASE_NAME}_$i.svg"
 	if [[ $? -ne 0 ]]; then
 	    echo "Slide $i could not be found, assuming slide deck ended"
-	    exit
+	    break
 	fi
 done
+
+echo "Download finished, converting and merging pdf"
+find -name "*.svg" -exec rsvg-convert -f pdf -o {}.pdf {} \;
+pdfunite $(ls -v $BASE_NAME_*.pdf) $BASE_NAME.pdf
+mv $BASE_NAME.pdf ..
+cd ..
+
+echo "PDF creation successful, you can now delete the \"$BASE_NAME\" folder. \
+Output file is \"$BASE_NAME.pdf\"."

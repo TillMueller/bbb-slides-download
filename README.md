@@ -1,6 +1,11 @@
 # Simple download script for BBB slides
 This script can be used to download a slide set from BigBlueButton
 
+## Dependencies
+- curl (to download the slides)
+- librsvg2-bin (to convert the svgs to pdfs)
+- pdfunite (to merge the pdfs into one)
+
 ## Usage
 Run the script with the base link for the slides as an argument.
 The link can be retrieved by "inspecting" the current slide.
