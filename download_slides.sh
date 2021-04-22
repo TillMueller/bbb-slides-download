@@ -7,21 +7,22 @@ fi
 BASE_LINK=$(sed 's|\(.*\)/.*|\1|' <<< $1)
 MAX_SLIDES=1024
 
+RANDOM_BASE_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
 if [ "$#" -eq 2 ]; then 
     BASE_NAME=$2
 else
-    BASE_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    BASE_NAME=$RANDOM_BASE_NAME
 fi
 
 echo "Base link is \"$BASE_LINK\""
-echo "Downloading slide deck from BBB, output file names will start with \"$BASE_NAME\""
 
-if [[ -d "$BASE_NAME" ]]; then
-    echo "Output folder \"$BASE_NAME\" already exists, exiting."
+if [[ -d "$RANDOM_BASE_NAME" ]]; then
+    echo "Output folder \"$RANDOM_BASE_NAME\" already exists, exiting."
     exit
 fi
-mkdir $BASE_NAME || exit
-cd $BASE_NAME
+mkdir $RANDOM_BASE_NAME || exit
+cd $RANDOM_BASE_NAME
 
 for i in $(seq 1 $MAX_SLIDES); do
 	echo "Downloading slide $i"
@@ -29,7 +30,7 @@ for i in $(seq 1 $MAX_SLIDES); do
 		--silent \
 		--compressed \
 		--fail \
-		--output "${BASE_NAME}_$i.svg"
+		--output "${RANDOM_BASE_NAME}_$i.svg"
 	if [[ $? -ne 0 ]]; then
 	    echo "Slide $i could not be found, assuming slide deck ended"
 	    break
@@ -38,9 +39,10 @@ done
 
 echo "Download finished, converting and merging pdf"
 find -name "*.svg" -exec rsvg-convert -f pdf -o {}.pdf {} \;
-pdfunite $(ls -v $BASE_NAME_*.pdf) $BASE_NAME.pdf
+pdfunite $(ls -v $RANDOM_BASE_NAME_*.pdf) $BASE_NAME.pdf || exit
 mv $BASE_NAME.pdf ..
 cd ..
+rm -r $RANDOM_BASE_NAME || echo "Could not delete temporary output folder \
+\"$RANDOM_BASE_NAME\""
 
-echo "PDF creation successful, you can now delete the \"$BASE_NAME\" folder. \
-Output file is \"$BASE_NAME.pdf\"."
+echo "PDF creation successful, output file is \"$BASE_NAME.pdf\"."
