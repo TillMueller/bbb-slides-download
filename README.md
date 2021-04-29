@@ -3,8 +3,10 @@ This script can be used to download a slide set from BigBlueButton
 
 ## Dependencies
 - curl (to download the slides)
-- librsvg2-bin (to convert the svgs to pdfs)
-- pdfunite (to merge the pdfs into one)
+- rsvg-convert / librsvg2-bin (to convert the svgs to pdfs)
+- pdfunite / poppler-utils (to merge the pdfs into one)
+
+On Ubuntu and similar systems just run `sudo apt install curl librsvg2-bin poppler-utils`
 
 ## Usage
 Run the script with the base link for the slides as an argument.
